@@ -1,0 +1,13 @@
+Срезы:
+    
+    аналог range [start:stop:step]
+
+List comprehensions:
+
+    если филтрация, то только if в конце:
+        winners = [i for i in range(10) if i % 2 = 0]
+
+    если изменение элемента, то if + else в начале:
+
+        winners = [team1[ind] if team1[ind] > team2[ind] else team2[ind] for ind in range(quantity)]
+    

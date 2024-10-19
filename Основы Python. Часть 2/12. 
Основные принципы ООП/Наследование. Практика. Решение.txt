@@ -1,0 +1,174 @@
+# Задача 1. Автомобили
+# Даны два класса автомобилей — грузовой и легковой. У каждого из этих автомобилей есть своя модель, 
+# и каждый может сделать два действия: сообщить свою модель и ехать.
+
+# Грузовой автомобиль имеет такой атрибут, как заполненность багажника, изначально он равен нулю. 
+# У него есть ещё два действия: загрузить и разгрузить багажник.
+
+# У легкового же автомобиля нет багажника, но есть навигационная система, которая передаётся вместе с моделью. 
+# Также, вместо загрузки и разгрузки, у него есть другое действие — включить навигацию.
+
+# Реализуйте классы грузового и легкового автомобилей. 
+# Для этого выделите общие атрибуты и методы в отдельный класс «Автомобиль» и используйте наследование. 
+# Не забудьте про функцию super в дочерних классах.
+
+class Car:
+
+    def __init__(self, model):
+        self.model = model
+
+    def __str__(self):
+        return self.model
+
+
+class Truck(Car):
+
+    def __init__(self, trunk_fullness=0, model="грузовой автомобиль"):
+        super().__init__(model)
+        self.trunk_fullness = trunk_fullness
+
+    def loading(self):
+        self.trunk_fullness = 100
+        print(f"{self} загружен")
+
+    def unloading(self):
+        self.trunk_fullness = 0
+        print(f"{self} разгружен")
+
+
+class PassengerCar(Car):
+
+    def __init__(self, gps_system, model="легковой автомобиль"):
+        super().__init__(model)
+        self.gps_system = gps_system
+
+    def gps_enable(self):
+        print(f"{self}, включена навигация {self.gps_system}")
+
+
+truck = Truck()
+truck.loading()
+truck.unloading()
+
+passenger_car = PassengerCar("ГЛОНАСС")
+passenger_car.gps_enable()
+
+# Задача 2. Домашние роботы
+# На выставку робототехники привезли несколько интересных моделей роботов, которые похожи между собой, 
+# но имеют немного разные функции. 
+
+# У каждого робота есть номер модели и действие operate, которое означает, что делает робот. 
+# Особенности роботов следующие: 
+# У робота-пылесоса есть мешок для мусора, изначально он пустой (0). 
+# При команде operate робот сообщает, что он пылесосит пол, и выводит текущую заполняемость мешка. 
+
+# У робота-охранника есть сигнализация, и при команде operate 
+# он выводит сообщение о патрулировании дома с помощью этой сигнализации. 
+
+# Ещё есть робот для бассейнов, который также является охранником. 
+# У этого робота есть значение глубины, и при команде operate он делает то же, что и робот-охранник, 
+# плюс сообщает, что охрана ведётся под водой. 
+
+# Напишите программу, которая реализует все необходимые классы роботов.
+
+
+class Robot:
+
+    def __init__(self, model):
+        self.model = model
+
+    def __str__(self):
+        return f"{self.__class__.__name__} model {self.model}"
+
+    def operate(self):
+        print("Робот ездит по кругу")
+
+
+class VacuumCleaningRobot(Robot):
+
+    def __init__(self, model):
+        super().__init__(model)
+        self.garbage_bag = 0
+
+    def operate(self):
+        self.garbage_bag += 1
+        print(f"Робот '{self}' пылесосит пол. Заполненность мешка - {self.garbage_bag}")
+
+
+class SecurityRobot(Robot):
+
+    def __init__(self, alarm_system, model):
+        super().__init__(model)
+        self.alarm_system = alarm_system
+
+    def operate(self):
+        print(f"Робот '{self}' охраняет дом при помощи '{self.alarm_system}'")
+
+
+class SwimmingPoolRobot(SecurityRobot):
+
+    def __init__(self, alarm_system, model, depth):
+        super().__init__(alarm_system, model)
+        self.depth = depth
+
+    def operate(self):
+        super().operate()
+        print("\tОхрана ведется под водой на глубине", self.depth)
+
+
+vacuum_cleaning_robot = VacuumCleaningRobot("Roomba 2.0")
+vacuum_cleaning_robot.operate()
+
+security_robot = SecurityRobot(alarm_system="Инфракрасная система охраны",
+                               model="Guard 3.0")
+security_robot.operate()
+
+swimming_pool_robot = SwimmingPoolRobot(alarm_system="Инфракрасная система охраны",
+                                        model="Guard 2.0",
+                                        depth=5)
+swimming_pool_robot.operate()
+
+
+# Задача 3. Кастомные исключения
+#
+# Исключения в Python также являются классами, и все они берут свои истоки от самого главного класса — Exception.
+# И для создания своего собственного класса ошибки достаточно написать его дочерний класс. Например:
+#
+#
+#
+# class MyOwnException(Exception):
+#
+#     pass
+#
+#
+#
+# raise MyOwnException('Это моя ошибка!')
+#
+#
+#
+# Причём содержимое объекта исключения чаще всего так и оставляют (просто pass), чтобы не сломать автоматические обработчики исключений.
+#
+# Напишите программу, которая считывает из файла numbers.txt пары чисел, делит первое число на второе и выводит ответ на экран.
+# Если первое число меньше второго, то программа выдаёт исключение DivisionError (нельзя делить большее на меньшее).
+#
+# Дополнительно, с помощью try except, можно обработать исключение на своё усмотрение.
+
+class DivisionError(Exception):
+
+    def __str__(self):
+        return "Нельзя делить большее на меньшее!"
+
+
+with open("numbers.txt", "r", encoding="utf8") as file:
+    for line in file:
+        try:
+            clear_line = line.rstrip()
+            first, second = clear_line.split()
+            if int(first) < int(second):
+                raise DivisionError
+            print(int(first) / int(second))
+        except (ValueError, DivisionError) as exc:
+            print(exc, type(exc), first, second)
+
+
+
